@@ -19,6 +19,27 @@ const writeJSON = (filePath, data) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 };
 
+// --- THE NEW JIKAN API FETCHER ---
+async function fetchPoster(title) {
+  try {
+    // 1-second pause to guarantee we never hit Jikan's rate limits
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    console.log(`[API] Fetching official poster from Jikan for: ${title}`);
+    const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(title)}&limit=1`);
+    
+    if (!res.ok) return null;
+    
+    const json = await res.json();
+    if (json.data && json.data.length > 0 && json.data[0].images?.jpg?.large_image_url) {
+      return json.data[0].images.jpg.large_image_url;
+    }
+  } catch (err) {
+    console.error(`Failed to fetch poster for ${title}:`, err);
+  }
+  return null;
+}
+
 async function fetchAndProcess() {
   console.log("Fetching RSS feeds...");
   const response = await fetch(SUBSPLEASE_RSS);
@@ -30,7 +51,7 @@ async function fetchAndProcess() {
 
   let latestFeed = readJSON(LATEST_FEED_PATH) || [];
   let newUpdates = false;
-  let newEntries = []; // We collect them here first to preserve the correct order
+  let newEntries = [];
 
   for (const item of items) {
     const rawRelease = {
@@ -46,7 +67,6 @@ async function fetchAndProcess() {
     const animeData = result.data;
     const animeId = animeData.anime_id;
     
-    // Check if it exists in the OLD feed OR the NEW array we are building
     if (
       latestFeed.some(f => f.id === `${animeId}-${animeData.episode}`) ||
       newEntries.some(f => f.id === `${animeId}-${animeData.episode}`)
@@ -61,8 +81,14 @@ async function fetchAndProcess() {
     let animeHistory = readJSON(animeFilePath) || {
       id: animeId,
       title: animeData.clean_title,
+      poster: null, // New caching property
       episodes: {}
     };
+
+    // If we don't have a poster saved yet, grab it!
+    if (!animeHistory.poster) {
+      animeHistory.poster = await fetchPoster(animeData.clean_title);
+    }
 
     if (!animeHistory.episodes[animeData.episode]) {
       animeHistory.episodes[animeData.episode] = {
@@ -80,7 +106,6 @@ async function fetchAndProcess() {
 
     writeJSON(animeFilePath, animeHistory);
 
-    // Push into our temporary block, preserving the correct descending order
     newEntries.push({
       id: `${animeId}-${animeData.episode}`,
       clean_title: animeData.clean_title,
@@ -90,12 +115,12 @@ async function fetchAndProcess() {
       size: animeData.size,
       seeders: Math.floor(Math.random() * 500) + 500,
       pub_date: animeData.pub_date,
-      magnet: animeData.magnet
+      magnet: animeData.magnet,
+      poster: animeHistory.poster // Inject it into the UI feed
     });
   }
 
   if (newUpdates) {
-    // Append the perfectly ordered new entries to the top of the old feed
     latestFeed = [...newEntries, ...latestFeed].slice(0, 100);
     writeJSON(LATEST_FEED_PATH, latestFeed);
     console.log("Database successfully generated.");
