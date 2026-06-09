@@ -2,17 +2,6 @@
   "id": "nigetsuri",
   "title": "Nigetsuri",
   "episodes": {
-    "10": {
-      "released_at": "2026-06-03T16:02:37.000Z",
-      "releases": [
-        {
-          "group": "SubsPlease",
-          "resolution": "1080p",
-          "magnet": "magnet:?xt=urn:btih:RNZEFNQ2ZYVU7BLNUQM4HKOQ45H5UH6D&dn=%5BSubsPlease%5D%20Nigetsuri%20-%2010%20%281080p%29%20%5B6ECB9A59%5D.mkv&xl=1447765569&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=http%3A%2F%2Ftracker.mywaifu.best%3A6969%2Fannounce&tr=https%3A%2F%2Ftracker.zhuqiy.com%3A443%2Fannounce&tr=udp%3A%2F%2Ftracker.tryhackx.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fretracker.hotplug.ru%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.dler.com%3A6969%2Fannounce&tr=http%3A%2F%2Ftracker.beeimg.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ft.overflow.biz%3A6969%2Fannounce&tr=wss%3A%2F%2Ftracker.openwebtorrent.com",
-          "size": "Unknown"
-        }
-      ]
-    },
     "07": {
       "released_at": "2026-05-13T16:01:58.000Z",
       "releases": [
@@ -35,6 +24,5 @@
         }
       ]
     }
-  },
-  "poster": "https://cdn.myanimelist.net/images/anime/1045/157132l.jpg"
+  }
 }
